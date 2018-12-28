@@ -269,6 +269,12 @@ public class HttpRequestInfo implements IHttpRequest {
         mBodyContent = body;
     }
 
+    @Override
+    public void setProxyConfig(ProxyConfig proxyConfig) {
+        this.mProxyConfig = proxyConfig;
+    }
+
+
     public static DefaultFullHttpRequest buildRequest(int method, String url)
             throws MalformedURLException {
         return buildRequest(method, url, null, null);

@@ -1,6 +1,8 @@
 package org.pretty.http;
 
 
+import org.pretty.proxy.ProxyConfig;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,6 +18,7 @@ public class HttpUtils {
     private String body;
     private Map<String,String> requestParams;
     private Map<String,String> requestHeaders;
+    private ProxyConfig proxyConfig;
 
     private HttpUtils(Builder builder ) {
         this.requestMode = builder.requestMode;
@@ -23,6 +26,7 @@ public class HttpUtils {
         this.requestParams = builder.requestParams;
         this.requestHeaders = builder.requestHeaders;
         this.body = builder.body;
+        this.proxyConfig = builder.proxyConfig;
     }
 
     public static Builder get() {
@@ -36,7 +40,7 @@ public class HttpUtils {
 
     public void execute(HttpCallBack listener) {
         HttpTask httpTask = new HttpTask( requestMode,requestHeaders, body,
-        		requestParams, url, listener);
+        		requestParams, url,proxyConfig, listener);
         ThreadPoolManger.getInstance().execute(httpTask);
     }
 
@@ -47,6 +51,7 @@ public class HttpUtils {
         private Map<String,String> requestParams;
         private Map<String,String> requestHeaders;
         private String body;
+        private ProxyConfig proxyConfig;
         
         private Builder(int requestMode) {
             this.requestMode = requestMode;
@@ -84,7 +89,11 @@ public class HttpUtils {
             this.body=body;
             return this;
         }
-             
+
+        public Builder addproxyConfig(ProxyConfig proxyConfig) {
+            this.proxyConfig=proxyConfig;
+            return this;
+        }
         public HttpUtils build() {
             return new HttpUtils(this);
         }

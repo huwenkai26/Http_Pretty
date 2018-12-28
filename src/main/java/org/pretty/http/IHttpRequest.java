@@ -1,5 +1,7 @@
 package org.pretty.http;
 
+import org.pretty.proxy.ProxyConfig;
+
 import java.util.Map;
 
 /**
@@ -25,4 +27,6 @@ public interface IHttpRequest {
     void setRequestFailRetryCount(int retryCount);
     
     void setBoby(String body);
+
+    void setProxyConfig(ProxyConfig proxyConfig);
 }

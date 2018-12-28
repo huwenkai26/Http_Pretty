@@ -2,6 +2,8 @@ package org.pretty.http;
 
 
 
+import org.pretty.proxy.ProxyConfig;
+
 import java.util.Map;
 
 /**
@@ -11,8 +13,8 @@ import java.util.Map;
 public class HttpTask implements Runnable {
     private HttpRequestInfo httpRequestInfo;
 
-    HttpTask( int requestMode, Map<String, String> requestHeaders, String bodyContent,
-    		Map<String, String> requestParams, String url, HttpCallBack httpListener) {
+    HttpTask(int requestMode, Map<String, String> requestHeaders, String bodyContent,
+             Map<String, String> requestParams, String url, ProxyConfig proxyConfig, HttpCallBack httpListener) {
         httpRequestInfo = new HttpRequestInfo();
         httpRequestInfo.setUrl(url);
         httpRequestInfo.setHttpCallBack(httpListener);
@@ -20,6 +22,7 @@ public class HttpTask implements Runnable {
         httpRequestInfo.setRequestHeader(requestHeaders);
         httpRequestInfo.setRequestMode(requestMode);
         httpRequestInfo.setBoby(bodyContent);
+        httpRequestInfo.setProxyConfig(proxyConfig);
     }
 
     @Override

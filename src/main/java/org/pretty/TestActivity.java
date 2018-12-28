@@ -8,10 +8,8 @@ import org.pretty.http.HttpUtils;
 
 public class TestActivity {
     public static void main(String[] args) {
-                String url = "http://47.75.40.123:9001/icoactivity/v2/activityForegin/findAll";
-
+        String url = "http://47.75.40.123:9001/icoactivity/v2/activityForegin/findAll";
         HttpUtils.get().url(url).build().execute(new StringCallBack() {
-
             @Override
             public void onError(ErrorCode errorCode) {
 
@@ -22,5 +20,7 @@ public class TestActivity {
                 System.out.println("-----------"+content+"-----------");
             }
         });
+
+
     }
 }
