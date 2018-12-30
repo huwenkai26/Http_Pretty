@@ -6,10 +6,10 @@ import org.slf4j.LoggerFactory;
 
 public class Debug {
 	public static boolean debug=false;
-	private static final String SDK = "kksdk";	
-	public static final String CORE = "kkcore";
-	private static final String VIDEO = "kkvideo";
-	private static final String DOWNLOAD = "kkdownload";
+	private static final String SDK = "kksdk {}";
+	public static final String CORE = "kkcore {}";
+	private static final String VIDEO = "kkvideo {}";
+	private static final String DOWNLOAD = "kkdownload {}";
 	private static final Logger Log = LoggerFactory.getLogger(Debug.class);
 
 	//core模块的日志

@@ -3,6 +3,9 @@ package org.pretty.callback;
 
 import com.google.gson.Gson;
 import org.pretty.utils.Debug;
+import org.pretty.utils.Parser;
+
+import java.lang.reflect.Type;
 
 
 /**
@@ -11,20 +14,20 @@ import org.pretty.utils.Debug;
 
 public abstract class JsonCallBack<M> extends StringCallBack {
 
-    private Class<M> requestBean;
 
-    protected JsonCallBack(Class<M> requestBean) {
-        this.requestBean = requestBean;
+
+    protected JsonCallBack() {
+
     }
 
     @Override
-    public void onSucceed(String content) {
+    public  void  onSucceed(String content) {
     	Debug.core("json:"+content);
         if (content != null) {
-            Gson gson = new Gson();
-            final M m = gson.fromJson(content, requestBean);
-            if (m != null) {
-                onResponse(m);
+            Type type = Parser.getInstance().getSuperclassTypeParameter(getClass());
+            final Object object = Parser.getInstance().parser(content, type);
+            if (object != null) {
+                onResponse((M) object);
             } else {
             	onError(new ErrorCode("Json parse error"));
             }

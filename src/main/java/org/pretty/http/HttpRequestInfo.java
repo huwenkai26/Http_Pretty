@@ -15,6 +15,7 @@ import io.netty.resolver.NoopAddressResolverGroup;
 import io.netty.util.ReferenceCountUtil;
 import org.pretty.proxy.ProxyConfig;
 import org.pretty.proxy.ProxyHandleFactory;
+import org.pretty.utils.ByteBufToBytes;
 import org.pretty.utils.Debug;
 import org.pretty.utils.ProtoUtil;
 import org.pretty.utils.ProtoUtil.RequestProto;
@@ -47,7 +48,6 @@ public class HttpRequestInfo implements IHttpRequest {
     private ProxyConfig mProxyConfig;
     private RequestProto mRequestProto;
     private ChannelFuture cf;
-    private ByteBuffer mByteBuffer;
     private byte[] mByteBuf;
 
     public HttpRequestInfo() {
@@ -121,10 +121,12 @@ public class HttpRequestInfo implements IHttpRequest {
                         ch.pipeline().addLast("httpCodec", new HttpClientCodec());
                         ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
                             private boolean isSuccess;
-
+                            private ByteBufToBytes reader;
                             @Override
                             public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                System.out.println(msg);
                                 try {
+
                                     if (msg instanceof HttpResponse) {
                                         HttpResponse httpResponse = (HttpResponse) msg;
                                         Integer responseCode = httpResponse.status().code();
@@ -132,9 +134,25 @@ public class HttpRequestInfo implements IHttpRequest {
                                             cf.channel().closeFuture();
                                             retryRequest(new HttpErrorCode("Request error url code :" + responseCode));
                                         } else {
+                                            System.out.println("CONTENT_TYPE:"
+                                                    + httpResponse.headers().get(HttpHeaderNames.CONTENT_TYPE));
+                                            if (HttpUtil.isContentLengthSet(httpResponse)) {
+                                                reader = new ByteBufToBytes(
+                                                        (int) HttpUtil.getContentLength(httpResponse));
+                                            }
                                             isSuccess = true;
                                         }
                                     }
+                                    if (msg instanceof HttpRequest) {
+                                        HttpRequest request = (HttpRequest) msg;
+                                        System.out.println("messageType:"+ request.headers().get("messageType"));
+                                        System.out.println("businessType:"+ request.headers().get("businessType"));
+                                        if (HttpUtil.isContentLengthSet(request)) {
+                                            reader = new ByteBufToBytes(
+                                                    (int) HttpUtil.getContentLength(request));
+                                        }
+                                    }
+
                                     if (msg instanceof HttpContent) {
                                         if (!isSuccess) {
                                             return;
@@ -153,8 +171,8 @@ public class HttpRequestInfo implements IHttpRequest {
                                     }
 
                                     if (msg instanceof LastHttpContent) {
-                                        LastHttpContent content = (LastHttpContent) msg;
                                         mHttpCallBack.onResponse(mByteBuf);
+                                        ctx.close();
                                     }
                                 } catch (Exception e) {
                                     throw e;

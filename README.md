@@ -15,3 +15,17 @@
             }
         });
 ```
+### 自定义返回
+例如希望回调User对象：
+```$xslt
+HttpUtils.get().url(url).build().execute(new JsonCallBack<Activity>() {
+            @Override
+            public void onError(ErrorCode errorCode) {
+
+            }
+
+            @Override
+            public void onResponse(Activity activity) {
+                System.out.println(activity.getData().toString());
+            }
+```
